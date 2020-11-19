@@ -9,12 +9,18 @@ public class Player : MonoBehaviour
     [SerializeField] float _mouseSensitivity;
     float _currentTilt;
     Camera _cam;
+    CapsuleCollider collider;
+    CharacterController controller;
+    Vector3 lastMousePos;
 
     // Start is called before the first frame update
     void Start()
     {
         _gunAnimator = transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<Animator>();
         _cam = Camera.main;
+        collider = transform.GetComponent<CapsuleCollider>();
+        Vector3 lastMousePos = Input.mousePosition;
+        controller = transform.GetComponent<CharacterController>();
     }
 
     // Update is called once per frame
@@ -27,11 +33,15 @@ public class Player : MonoBehaviour
             _gunAnimator.SetBool("Fire", true);
         }
 
+        Gravity();
+
         Aim();
     }
 
     void Aim()
     {
+        Vector3 mousePos = Input.mousePosition;
+
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
 
@@ -39,17 +49,27 @@ public class Player : MonoBehaviour
 
         _currentTilt -= mouseY * _mouseSensitivity;
         _currentTilt = Mathf.Clamp(_currentTilt, -90f, 90f);
-        _cam.transform.localEulerAngles = new Vector3(_currentTilt, 0f, 0f);
+
+        if(!(mousePos == lastMousePos))
+            _cam.transform.localEulerAngles = new Vector3(_currentTilt, 0f, 0f);
+
+        lastMousePos = mousePos;
     }
 
-    void Movement() 
+    void Movement()
     {
         Vector3 sidewaysMovement = Input.GetAxis("Horizontal") * transform.right;
         Vector3 forwardsMovement = Input.GetAxis("Vertical") * transform.forward;
         Vector3 movementVector = sidewaysMovement + forwardsMovement;
         movementVector.Normalize();
-        movementVector = movementVector * Time.deltaTime * _moveSpeed;
 
-        transform.position += movementVector;
+
+        controller.Move(movementVector * _moveSpeed * Time.deltaTime);
     }
+
+    void Gravity()
+    {
+        controller.Move(new Vector3(0, -5f * Time.deltaTime, 0));
+    }
+
 }
