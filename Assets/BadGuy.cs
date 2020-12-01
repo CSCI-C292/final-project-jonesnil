@@ -27,7 +27,6 @@ public class BadGuy : MonoBehaviour
     void Update()
     {
         float distanceToFirst = (this.transform.position - firstStop).magnitude;
-        Debug.Log(distanceToFirst);
         if (distanceToFirst < .1f)
             Invoke("GoToSecond", .5f);
 

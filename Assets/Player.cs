@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
     Animator _gunAnimator;
     [SerializeField] float _moveSpeed;
     [SerializeField] float _mouseSensitivity;
+    [SerializeField] int _damage;
     float _currentTilt;
     Camera _cam;
     CapsuleCollider collider;
@@ -28,14 +29,15 @@ public class Player : MonoBehaviour
     {
         Movement();
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            _gunAnimator.SetBool("Fire", true);
-        }
-
         Gravity();
 
         Aim();
+
+        if (Input.GetMouseButtonDown(0) && !_gunAnimator.GetCurrentAnimatorStateInfo(0).IsName("Fire")) 
+        {
+            _gunAnimator.SetTrigger("Fire");
+            Shoot();
+        }
     }
 
     void Aim()
@@ -54,6 +56,18 @@ public class Player : MonoBehaviour
             _cam.transform.localEulerAngles = new Vector3(_currentTilt, 0f, 0f);
 
         lastMousePos = mousePos;
+    }
+
+    void Shoot() 
+    {
+        Vector3 centerScreen = Camera.main.transform.position;
+        Vector3 cameraForward = Camera.main.transform.forward;
+        Ray shootRay = new Ray(centerScreen, cameraForward);
+
+        if (Physics.Raycast(shootRay, 100f, 1 << 9)) 
+        {
+            GameEvents.InvokeHeroShot(_damage);
+        }
     }
 
     void Movement()

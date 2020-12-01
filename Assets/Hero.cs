@@ -10,10 +10,13 @@ public class Hero : MonoBehaviour
     Vector3 goal;
     [SerializeField] GameObject player;
     CapsuleCollider collider;
+    [SerializeField] int health;
 
     // Start is called before the first frame update
     void Start()
     {
+        GameEvents.HeroShot += OnHeroShot;
+
         heroAnimator = this.GetComponent<Animator>();
         agent = this.GetComponent<NavMeshAgent>();
         goal = this.transform.GetChild(9).transform.position;
@@ -25,8 +28,13 @@ public class Hero : MonoBehaviour
     void Update()
     {
         heroAnimator.SetFloat("Speed", agent.velocity.magnitude);
-
-        TryToShootPlayer();
+        if (this.health <= 0) 
+        {
+            agent.isStopped = true;
+            heroAnimator.SetBool("Dead", true);
+        }
+        else
+            TryToShootPlayer();
     }
 
     void TryToShootPlayer() 
@@ -68,6 +76,12 @@ public class Hero : MonoBehaviour
 
         }
 
+
+    }
+
+    void OnHeroShot(object sender, IntEventArgs args) 
+    {
+        this.health -= args.intPayload;
 
     }
 }
