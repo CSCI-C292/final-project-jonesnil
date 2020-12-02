@@ -5,10 +5,10 @@ using UnityEngine.AI;
 
 public class Hero : MonoBehaviour
 {
+    [SerializeField] RunTimeData data;
     Animator heroAnimator;
     NavMeshAgent agent;
     Vector3 goal;
-    [SerializeField] GameObject player;
     CapsuleCollider collider;
     [SerializeField] int health;
 
@@ -27,6 +27,8 @@ public class Hero : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        data.heroPos = this.transform.position;
+
         heroAnimator.SetFloat("Speed", agent.velocity.magnitude);
         if (this.health <= 0) 
         {
@@ -43,7 +45,7 @@ public class Hero : MonoBehaviour
         // It says, "cast a line from me to the player. Give me the first thing you
         // hit, but ignore layer 9 (meaning don't worry if you hit the hero's collider's.)"
         RaycastHit shot;
-        Physics.Linecast(transform.position, player.transform.position, out shot, ~(1 << 9));
+        Physics.Linecast(transform.position, Camera.main.transform.position, out shot, ~(1 << 9));
 
         // Check if what you shot is the player (player is represented by layer 8.)
         if (shot.collider.gameObject.layer == 8)
@@ -55,9 +57,9 @@ public class Hero : MonoBehaviour
             // uses rotates on the y axis. 
             // https://answers.unity.com/questions/36255/lookat-to-only-rotate-on-y-axis-how.html
 
-            Vector3 targetPosition = new Vector3(player.transform.position.x,
+            Vector3 targetPosition = new Vector3(Camera.main.transform.position.x,
                                        this.transform.position.y,
-                                       player.transform.position.z);
+                                       Camera.main.transform.position.z);
 
             this.transform.LookAt(targetPosition);
 
