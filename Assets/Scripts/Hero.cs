@@ -6,6 +6,8 @@ using UnityEngine.AI;
 public class Hero : MonoBehaviour
 {
     [SerializeField] RunTimeData data;
+    [SerializeField] int damage;
+    Vector3 shootingAt;
     Animator heroAnimator;
     NavMeshAgent agent;
     Vector3 goal;
@@ -17,6 +19,7 @@ public class Hero : MonoBehaviour
     {
         GameEvents.HeroShot += OnHeroShot;
 
+        data.heroDamage = damage;
         heroAnimator = this.GetComponent<Animator>();
         agent = this.GetComponent<NavMeshAgent>();
         goal = this.transform.GetChild(9).transform.position;
@@ -45,10 +48,10 @@ public class Hero : MonoBehaviour
         // It says, "cast a line from me to the player. Give me the first thing you
         // hit, but ignore layer 9 (meaning don't worry if you hit the hero's collider's.)"
         RaycastHit shot;
-        Physics.Linecast(transform.position, Camera.main.transform.position, out shot, ~(1 << 9));
+        bool shotAnything = Physics.Linecast(transform.position, Camera.main.transform.position, out shot, ~(1 << 9));
 
         // Check if what you shot is the player (player is represented by layer 8.)
-        if (shot.collider.gameObject.layer == 8)
+        if (shotAnything && shot.collider.gameObject.layer == 8)
         {
             //You found the player! Stop and shoot at them.
 
@@ -57,28 +60,63 @@ public class Hero : MonoBehaviour
             // uses rotates on the y axis. 
             // https://answers.unity.com/questions/36255/lookat-to-only-rotate-on-y-axis-how.html
 
-            Vector3 targetPosition = new Vector3(Camera.main.transform.position.x,
-                                       this.transform.position.y,
-                                       Camera.main.transform.position.z);
+            ShootAt(Camera.main.transform.position);
 
-            this.transform.LookAt(targetPosition);
-
-            heroAnimator.SetBool("Shooting", true);
-            agent.isStopped = true;
         }
         //If the player isn't in sight...
         else {
-            // Check if we're still stopped, and if we are
-            // let's get moving to the core.
-            if (agent.isStopped == true)
-                agent.isStopped = false;
+            //Try shooting at the nearest bad guy
+            bool shotBadGuy = Physics.Linecast(transform.position, data.nearestBadGuyToHero, ~((1 << 9) | (1 << 10)));
 
-            // Stop shooting doofus they're gone!
-            heroAnimator.SetBool("Shooting", false);
+            if (!shotBadGuy)
+            {
+                ShootAt(data.nearestBadGuyToHero);
+            }
+            else
+            {
 
+                // Check if we're still stopped, and if we are
+                // let's get moving to the core.
+                if (agent.isStopped == true)
+                    agent.isStopped = false;
+
+                // Stop shooting doofus they're gone!
+                heroAnimator.SetBool("Shooting", false);
+            }
         }
 
 
+    }
+
+    public void HurtWhatYoureShooting() 
+    {
+        RaycastHit shot;
+        bool shotAnything = Physics.Linecast(transform.position, shootingAt, out shot, ~(1 << 9));
+
+        if(shotAnything && shot.transform.gameObject.layer == 8)
+        {
+            GameEvents.InvokePlayerShot();
+        }
+
+        bool shotBadGuy = Physics.Linecast(transform.position, shootingAt, ~((1 << 9) | (1 << 10)));
+        if (!shotBadGuy) 
+        {
+            GameEvents.InvokeNearestBadGuyShot();
+        }
+    }
+
+    public void ShootAt(Vector3 position) 
+    {
+
+        Vector3 targetPosition = new Vector3(position.x,
+                                   this.transform.position.y,
+                                   position.z);
+
+        this.transform.LookAt(targetPosition);
+
+        shootingAt = position;
+        heroAnimator.SetBool("Shooting", true);
+        agent.isStopped = true;
     }
 
     void OnHeroShot(object sender, IntEventArgs args) 

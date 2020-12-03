@@ -1,27 +1,37 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class Player : MonoBehaviour
 {
     Animator _gunAnimator;
+    [SerializeField] RunTimeData data;
     [SerializeField] float _moveSpeed;
     [SerializeField] float _mouseSensitivity;
     [SerializeField] int _damage;
+    [SerializeField] int _startHealth;
+    int _health;
     float _currentTilt;
     Camera _cam;
     CapsuleCollider collider;
     CharacterController controller;
     Vector3 lastMousePos;
+    bool _dead;
 
     // Start is called before the first frame update
     void Start()
     {
+        GameEvents.PlayerRespawn += OnPlayerRespawn;
+        GameEvents.PlayerShot += OnPlayerShot;
+
+        _health = _startHealth;
         _gunAnimator = transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<Animator>();
         _cam = Camera.main;
         collider = transform.GetComponent<CapsuleCollider>();
         Vector3 lastMousePos = Input.mousePosition;
         controller = transform.GetComponent<CharacterController>();
+        _dead = false;
     }
 
     // Update is called once per frame
@@ -37,6 +47,12 @@ public class Player : MonoBehaviour
         {
             _gunAnimator.SetTrigger("Fire");
             Shoot();
+        }
+
+        if (!_dead && this._health <= 0)
+        {
+            _dead = true;
+            GameEvents.InvokePlayerDead();
         }
     }
 
@@ -63,8 +79,10 @@ public class Player : MonoBehaviour
         Vector3 centerScreen = Camera.main.transform.position;
         Vector3 cameraForward = Camera.main.transform.forward;
         Ray shootRay = new Ray(centerScreen, cameraForward);
+        RaycastHit shot;
+        bool shotAnything = Physics.Raycast(shootRay, out shot);
 
-        if (Physics.Raycast(shootRay, 100f, 1 << 9)) 
+        if (shotAnything && shot.transform.gameObject.layer == 9) 
         {
             GameEvents.InvokeHeroShot(_damage);
         }
@@ -86,4 +104,17 @@ public class Player : MonoBehaviour
         controller.Move(new Vector3(0, -5f * Time.deltaTime, 0));
     }
 
+    void OnPlayerShot(object sender, EventArgs args) 
+    {
+        this._health -= data.heroDamage;
+    }
+
+    void OnPlayerRespawn(object sender, PositionEventArgs args) 
+    {
+        this._health = _startHealth;
+        _dead = false;
+        Vector3 newPos = args.positionPayload;
+
+        this.transform.position = newPos;
+    }
 }
