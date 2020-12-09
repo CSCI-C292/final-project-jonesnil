@@ -3921,7 +3921,7 @@ MonoBehaviour:
     gonna get.  \nYour job is to man your patrol and shoot any \"hero\" that tries
     to mess up our business.\nIf one of ya's dies so be it, but the next one had
     better step up and take them down!\nIf you chumps let anybody step foot in the
-    core this whole joint is gonna go sky high, and you better hope it kills you!\n\n\t\t\t\t\t\t\t\t\t\t\t\t\tLove,
+    core this whole joint is gonna go sky high, and you better hope it kills you!\n\t\t\t\t\t\t\t\t\tLove,
     Boss "
 --- !u!222 &365159369
 CanvasRenderer:
@@ -11851,6 +11851,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 9100000, guid: 260c8f9b0c65bf9449e75de90f169211, type: 2}
     - target: {fileID: -4216859302048453862, guid: 027f00c86c565a44f865fc7c749b99e5, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4216859302048453862, guid: 027f00c86c565a44f865fc7c749b99e5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -8
       objectReference: {fileID: 0}
@@ -11863,6 +11867,10 @@ PrefabInstance:
       value: -36.641975
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 027f00c86c565a44f865fc7c749b99e5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.69446045
+      objectReference: {fileID: 0}
+    - target: {fileID: -4216859302048453862, guid: 027f00c86c565a44f865fc7c749b99e5, type: 3}
       propertyPath: m_LocalRotation.x
       value: -0
       objectReference: {fileID: 0}
@@ -11873,14 +11881,6 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 027f00c86c565a44f865fc7c749b99e5, type: 3}
       propertyPath: m_LocalRotation.z
       value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: -4216859302048453862, guid: 027f00c86c565a44f865fc7c749b99e5, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.69446045
-      objectReference: {fileID: 0}
-    - target: {fileID: -4216859302048453862, guid: 027f00c86c565a44f865fc7c749b99e5, type: 3}
-      propertyPath: m_RootOrder
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 027f00c86c565a44f865fc7c749b99e5, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -20394,6 +20394,10 @@ PrefabInstance:
       value: SkelMesh_Bodyguard_01
       objectReference: {fileID: 0}
     - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
       propertyPath: m_LocalPosition.x
       value: -20.13
       objectReference: {fileID: 0}
@@ -20406,6 +20410,10 @@ PrefabInstance:
       value: -38.35
       objectReference: {fileID: 0}
     - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
@@ -20416,14 +20424,6 @@ PrefabInstance:
     - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
-      propertyPath: m_RootOrder
-      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

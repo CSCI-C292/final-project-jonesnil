@@ -92,22 +92,26 @@ public class BadGuy : MonoBehaviour
 
     void GoToFourth()
     {
-        agent.SetDestination(fourthStop);
+        if (this.agent.enabled)
+            agent.SetDestination(fourthStop);
     }
 
     void GoToThird()
     {
-        agent.SetDestination(thirdStop);
+        if (this.agent.enabled)
+            agent.SetDestination(thirdStop);
     }
 
     void GoToSecond() 
     {
-        agent.SetDestination(secondStop);
+        if (this.agent.enabled)
+            agent.SetDestination(secondStop);
     }
 
     void GoToFirst() 
     {
-        agent.SetDestination(firstStop);
+        if (this.agent.enabled)
+            agent.SetDestination(firstStop);
     }
 
     bool CanShootHero() 

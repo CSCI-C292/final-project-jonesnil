@@ -22,35 +22,48 @@ public static class GameEvents
     public static event EventHandler PlayerDead;
     public static event EventHandler<PositionEventArgs> PlayerRespawn;
     public static event EventHandler NearestBadGuyShot;
+    public static event EventHandler BadGuyDead;
     public static event EventHandler GameOver;
     public static void InvokeHeroShot(int intPayloadDummy)
     {
-        HeroShot(null, new IntEventArgs { intPayload = intPayloadDummy });
+        if (HeroShot != null)
+            HeroShot(null, new IntEventArgs { intPayload = intPayloadDummy });
     }
 
     public static void InvokePlayerShot()
     {
-        PlayerShot(null, EventArgs.Empty);
+        if(PlayerShot != null)
+            PlayerShot(null, EventArgs.Empty);
     }
 
     public static void InvokePlayerDead()
     {
-        PlayerDead(null, EventArgs.Empty);
+        if (PlayerDead != null)
+            PlayerDead(null, EventArgs.Empty);
     }
 
     public static void InvokePlayerRespawn(Vector3 position)
     {
-        PlayerRespawn(null, new PositionEventArgs { positionPayload = position });
+        if (PlayerRespawn != null)
+            PlayerRespawn(null, new PositionEventArgs { positionPayload = position });
     }
 
     public static void InvokeNearestBadGuyShot()
     {
-        NearestBadGuyShot(null, EventArgs.Empty);
+        if (NearestBadGuyShot != null)
+            NearestBadGuyShot(null, EventArgs.Empty);
+    }
+
+    public static void InvokeBadGuyDead()
+    {
+        if (BadGuyDead != null)
+            BadGuyDead(null, EventArgs.Empty);
     }
 
     public static void InvokeGameOver()
     {
-        GameOver(null, EventArgs.Empty);
+        if (GameOver != null)
+            GameOver(null, EventArgs.Empty);
     }
 
 }

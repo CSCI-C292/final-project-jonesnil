@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
     AudioSource pistolShotSound;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         GameEvents.PlayerRespawn += OnPlayerRespawn;
         GameEvents.PlayerShot += OnPlayerShot;

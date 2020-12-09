@@ -14,6 +14,7 @@ public class StateManager : MonoBehaviour
     {
         GameEvents.PlayerDead += OnPlayerDead;
         GameEvents.GameOver += OnGameOver;
+        GameEvents.BadGuyDead += OnBadGuyDead;
 
         this.badGuyCount = this.transform.childCount;
         int counter = 0;
@@ -24,11 +25,7 @@ public class StateManager : MonoBehaviour
             badGuys[counter] = this.transform.GetChild(counter).GetComponent<BadGuy>();
             counter += 1;
         }
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
         data.nearestBadGuyToHero = NearestBadGuyToHero();
     }
 
@@ -44,6 +41,7 @@ public class StateManager : MonoBehaviour
                 badGuys[counter].nearest = false;
                 GameEvents.InvokePlayerRespawn(badGuys[counter].transform.position);
                 badGuys[counter].DieInvisible();
+                data.nearestBadGuyToHero = NearestBadGuyToHero();
                 return;
             }
 
@@ -72,10 +70,16 @@ public class StateManager : MonoBehaviour
         return nearest;
     }
 
+    void OnBadGuyDead(object sender, EventArgs args)
+    {
+        data.nearestBadGuyToHero = NearestBadGuyToHero();
+    }
+
     void OnGameOver(object sender, EventArgs args)
     {
         GameEvents.PlayerDead -= OnPlayerDead;
         GameEvents.GameOver -= OnGameOver;
+        GameEvents.BadGuyDead -= OnBadGuyDead;
     }
 
 }
