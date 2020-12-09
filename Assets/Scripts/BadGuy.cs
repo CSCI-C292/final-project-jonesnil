@@ -44,6 +44,7 @@ public class BadGuy : MonoBehaviour
     {
         if (this.health <= 0) 
         {
+            this.nearest = false;
             this.dead = true;
             this.badGuyAnimator.SetBool("Dead", true);
             agent.isStopped = true;
@@ -132,19 +133,19 @@ public class BadGuy : MonoBehaviour
     {
         float distanceToFirst = (this.transform.position - firstStop).magnitude;
         if (distanceToFirst < .1f)
-            Invoke("GoToSecond", .5f);
+            GoToSecond();
 
         float distanceToSecond = (this.transform.position - secondStop).magnitude;
         if (distanceToSecond < .1f)
-            Invoke("GoToThird", .5f);
+            GoToThird();
 
         float distanceToThird = (this.transform.position - thirdStop).magnitude;
         if (distanceToThird < .1f)
-            Invoke("GoToFourth", .5f);
+            GoToFourth();
 
         float distanceToFourth = (this.transform.position - fourthStop).magnitude;
         if (distanceToFourth < .1f)
-            Invoke("GoToFirst", .5f);
+            GoToFirst();
     }
 
     void OnNearestBadGuyShot(object sender, EventArgs args) 
@@ -161,14 +162,15 @@ public class BadGuy : MonoBehaviour
         GameEvents.InvokeHeroShot(damage);
     }
 
-    public void DieAtPlayerPos() 
+    public void DieAtPosition(Vector3 position) 
     {
-        this.badGuyCollider.enabled = false;
-        this.agent.enabled = false;
-        this.transform.position = IgnoreY(Camera.main.transform.position);
-        this.transform.rotation = Quaternion.Euler(IgnoreY(Camera.main.transform.rotation.eulerAngles));
+        this.nearest = false;
         this.dead = true;
-        this.badGuyAnimator.SetBool("Dead", true);
+        this.badGuyCollider.enabled = false;
+        this.health = 0;
+        this.transform.position = IgnoreY(position);
+        Debug.Log(IgnoreY(position));
+        this.transform.rotation = Quaternion.Euler(IgnoreY(Camera.main.transform.rotation.eulerAngles));
     }
 
     void OnGameOver(object sender, EventArgs args)

@@ -51,18 +51,17 @@ public class Player : MonoBehaviour
             _gunAnimator.SetTrigger("Fire");
             Shoot();
         }
-
-        
-
-        if (!_dead && this._health <= 0)
-        {
-            _dead = true;
-            GameEvents.InvokePlayerDead();
-        }
     }
 
     private void LateUpdate()
     {
+        if (!_dead && this._health <= 0)
+        {
+            controller.enabled = false;
+            _dead = true;
+            GameEvents.InvokePlayerDead();
+        }
+
         Aim();
     }
 
@@ -119,8 +118,9 @@ public class Player : MonoBehaviour
         this._health = _startHealth;
         _dead = false;
         Vector3 newPos = args.positionPayload;
-
         this.transform.position = newPos;
+
+        controller.enabled = true;
     }
 
     void OnGameOver(object sender, EventArgs args)

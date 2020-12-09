@@ -80,7 +80,6 @@ public class Hero : MonoBehaviour
             //Ignore the one that means no bad guy is left
             if (Vector3.Equals(data.nearestBadGuyToHero, new Vector3(0f, 0f, 0f))) 
             {
-                Debug.Log("true");
                 shotBadGuy = true;
             }
 

@@ -39,8 +39,11 @@ public class StateManager : MonoBehaviour
             if (!badGuys[counter].dead) 
             {
                 badGuys[counter].nearest = false;
+                
                 Vector3 playerSpawnPos = badGuys[counter].transform.position;
-                badGuys[counter].DieAtPlayerPos();
+                Debug.Log(playerSpawnPos);
+                Vector3 playerPos = Camera.main.transform.position;
+                badGuys[counter].DieAtPosition(playerPos);
                 GameEvents.InvokePlayerRespawn(playerSpawnPos);
                 data.nearestBadGuyToHero = NearestBadGuyToHero();
                 return;
