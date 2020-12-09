@@ -27,6 +27,7 @@ public class Player : MonoBehaviour
         GameEvents.PlayerShot += OnPlayerShot;
         GameEvents.GameOver += OnGameOver;
 
+        Cursor.lockState = CursorLockMode.Locked;
         _health = _startHealth;
         _gunAnimator = transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<Animator>();
         _cam = Camera.main;
@@ -44,14 +45,14 @@ public class Player : MonoBehaviour
 
         Gravity();
 
-        Aim();
-
         if (Input.GetMouseButtonDown(0) && !_gunAnimator.GetCurrentAnimatorStateInfo(0).IsName("Fire") && !_dead) 
         {
             pistolShotSound.Play();
             _gunAnimator.SetTrigger("Fire");
             Shoot();
         }
+
+        
 
         if (!_dead && this._health <= 0)
         {
@@ -60,10 +61,13 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void LateUpdate()
+    {
+        Aim();
+    }
+
     void Aim()
     {
-        Vector3 mousePos = Input.mousePosition;
-
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
 
@@ -71,11 +75,7 @@ public class Player : MonoBehaviour
 
         _currentTilt -= mouseY * _mouseSensitivity;
         _currentTilt = Mathf.Clamp(_currentTilt, -90f, 90f);
-
-        if(!(mousePos == lastMousePos))
-            _cam.transform.localEulerAngles = new Vector3(_currentTilt, 0f, 0f);
-
-        lastMousePos = mousePos;
+        _cam.transform.localEulerAngles = new Vector3(_currentTilt, 0f, 0f);
     }
 
     void Shoot() 
@@ -111,6 +111,7 @@ public class Player : MonoBehaviour
     void OnPlayerShot(object sender, EventArgs args) 
     {
         this._health -= data.heroDamage;
+
     }
 
     void OnPlayerRespawn(object sender, PositionEventArgs args) 
@@ -124,6 +125,8 @@ public class Player : MonoBehaviour
 
     void OnGameOver(object sender, EventArgs args)
     {
+        Cursor.lockState = CursorLockMode.None;
+
         GameEvents.PlayerRespawn -= OnPlayerRespawn;
         GameEvents.PlayerShot -= OnPlayerShot;
         GameEvents.GameOver -= OnGameOver;

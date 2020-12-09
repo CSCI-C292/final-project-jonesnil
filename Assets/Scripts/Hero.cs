@@ -77,6 +77,13 @@ public class Hero : MonoBehaviour
             //Try shooting at the nearest bad guy
             bool shotBadGuy = Physics.Linecast(transform.position, data.nearestBadGuyToHero, ~((1 << 9) | (1 << 10)));
 
+            //Ignore the one that means no bad guy is left
+            if (Vector3.Equals(data.nearestBadGuyToHero, new Vector3(0f, 0f, 0f))) 
+            {
+                Debug.Log("true");
+                shotBadGuy = true;
+            }
+
             if (!shotBadGuy)
             {
                 ShootAt(data.nearestBadGuyToHero);

@@ -10025,7 +10025,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 3a9d7d6a77358374093955d24df66b9c, type: 2}
   _moveSpeed: 8
-  _mouseSensitivity: 6
+  _mouseSensitivity: 3
   _damage: 1
   _startHealth: 6
 --- !u!143 &506843879

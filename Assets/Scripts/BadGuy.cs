@@ -49,6 +49,13 @@ public class BadGuy : MonoBehaviour
             agent.isStopped = true;
         }
 
+        if (nearest) 
+        {
+            data.nearestBadGuyToHero = this.transform.position;
+        }
+
+        badGuyAnimator.SetFloat("Speed", agent.velocity.magnitude);
+
         if (!dead)
         {
             if (CanShootHero())
@@ -61,9 +68,7 @@ public class BadGuy : MonoBehaviour
                 // uses rotates on the y axis. 
                 // https://answers.unity.com/questions/36255/lookat-to-only-rotate-on-y-axis-how.html
 
-                Vector3 targetPosition = new Vector3(data.heroPos.x,
-                                           this.transform.position.y,
-                                           data.heroPos.z);
+                Vector3 targetPosition = IgnoreY(data.heroPos);
 
                 this.transform.LookAt(data.heroPos);
 
@@ -86,8 +91,12 @@ public class BadGuy : MonoBehaviour
                     Patrol();
             }
 
-            badGuyAnimator.SetFloat("Speed", agent.velocity.magnitude);
         }
+    }
+
+    Vector3 IgnoreY(Vector3 target) 
+    {
+        return new Vector3(target.x, this.transform.position.y, target.z);
     }
 
     void GoToFourth()
@@ -152,11 +161,12 @@ public class BadGuy : MonoBehaviour
         GameEvents.InvokeHeroShot(damage);
     }
 
-    public void DieInvisible() 
+    public void DieAtPlayerPos() 
     {
         this.badGuyCollider.enabled = false;
         this.agent.enabled = false;
-        this.transform.position = new Vector3(100f, -20f, 100f);
+        this.transform.position = IgnoreY(Camera.main.transform.position);
+        this.transform.rotation = Quaternion.Euler(IgnoreY(Camera.main.transform.rotation.eulerAngles));
         this.dead = true;
         this.badGuyAnimator.SetBool("Dead", true);
     }
