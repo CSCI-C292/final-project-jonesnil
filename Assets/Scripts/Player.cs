@@ -18,12 +18,14 @@ public class Player : MonoBehaviour
     CharacterController controller;
     Vector3 lastMousePos;
     bool _dead;
+    AudioSource pistolShotSound;
 
     // Start is called before the first frame update
     void Start()
     {
         GameEvents.PlayerRespawn += OnPlayerRespawn;
         GameEvents.PlayerShot += OnPlayerShot;
+        GameEvents.GameOver += OnGameOver;
 
         _health = _startHealth;
         _gunAnimator = transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<Animator>();
@@ -32,6 +34,7 @@ public class Player : MonoBehaviour
         Vector3 lastMousePos = Input.mousePosition;
         controller = transform.GetComponent<CharacterController>();
         _dead = false;
+        pistolShotSound = transform.GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -43,8 +46,9 @@ public class Player : MonoBehaviour
 
         Aim();
 
-        if (Input.GetMouseButtonDown(0) && !_gunAnimator.GetCurrentAnimatorStateInfo(0).IsName("Fire")) 
+        if (Input.GetMouseButtonDown(0) && !_gunAnimator.GetCurrentAnimatorStateInfo(0).IsName("Fire") && !_dead) 
         {
+            pistolShotSound.Play();
             _gunAnimator.SetTrigger("Fire");
             Shoot();
         }
@@ -116,5 +120,12 @@ public class Player : MonoBehaviour
         Vector3 newPos = args.positionPayload;
 
         this.transform.position = newPos;
+    }
+
+    void OnGameOver(object sender, EventArgs args)
+    {
+        GameEvents.PlayerRespawn -= OnPlayerRespawn;
+        GameEvents.PlayerShot -= OnPlayerShot;
+        GameEvents.GameOver -= OnGameOver;
     }
 }

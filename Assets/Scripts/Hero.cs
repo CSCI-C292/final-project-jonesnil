@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using System;
 
 public class Hero : MonoBehaviour
 {
@@ -13,18 +14,24 @@ public class Hero : MonoBehaviour
     Vector3 goal;
     CapsuleCollider collider;
     [SerializeField] int health;
+    AudioSource pistolShotSound;
+    bool gameOver;
 
     // Start is called before the first frame update
     void Start()
     {
         GameEvents.HeroShot += OnHeroShot;
+        GameEvents.GameOver += OnGameOver;
 
-        data.heroDamage = damage;
         heroAnimator = this.GetComponent<Animator>();
         agent = this.GetComponent<NavMeshAgent>();
         goal = this.transform.GetChild(9).transform.position;
         collider = this.GetComponent<CapsuleCollider>();
         agent.SetDestination(goal);
+        pistolShotSound = transform.GetComponent<AudioSource>();
+        
+        gameOver = false;
+        data.heroDamage = damage;
     }
 
     // Update is called once per frame
@@ -33,11 +40,13 @@ public class Hero : MonoBehaviour
         data.heroPos = this.transform.position;
 
         heroAnimator.SetFloat("Speed", agent.velocity.magnitude);
-        if (this.health <= 0) 
+
+        if (this.health <= 0)
         {
             agent.isStopped = true;
             heroAnimator.SetBool("Dead", true);
         }
+
         else
             TryToShootPlayer();
     }
@@ -51,7 +60,7 @@ public class Hero : MonoBehaviour
         bool shotAnything = Physics.Linecast(transform.position, Camera.main.transform.position, out shot, ~(1 << 9));
 
         // Check if what you shot is the player (player is represented by layer 8.)
-        if (shotAnything && shot.collider.gameObject.layer == 8)
+        if (shotAnything && shot.collider.gameObject.layer == 8 && !gameOver)
         {
             //You found the player! Stop and shoot at them.
 
@@ -93,6 +102,8 @@ public class Hero : MonoBehaviour
         RaycastHit shot;
         bool shotAnything = Physics.Linecast(transform.position, shootingAt, out shot, ~(1 << 9));
 
+        pistolShotSound.Play();
+
         if(shotAnything && shot.transform.gameObject.layer == 8)
         {
             GameEvents.InvokePlayerShot();
@@ -121,7 +132,17 @@ public class Hero : MonoBehaviour
 
     void OnHeroShot(object sender, IntEventArgs args) 
     {
+        heroAnimator.SetBool("Shot", true);
         this.health -= args.intPayload;
 
+    }
+
+    void OnGameOver(object sender, EventArgs args)
+    {
+        gameOver = true;
+
+
+        GameEvents.HeroShot -= OnHeroShot;
+        GameEvents.GameOver -= OnGameOver;
     }
 }

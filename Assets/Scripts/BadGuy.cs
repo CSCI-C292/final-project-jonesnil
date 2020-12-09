@@ -18,11 +18,13 @@ public class BadGuy : MonoBehaviour
     Vector3 fourthStop;
     public bool nearest;
     public bool dead;
+    AudioSource pistolShotSound;
 
     // Start is called before the first frame update
     void Start()
     {
         GameEvents.NearestBadGuyShot += OnNearestBadGuyShot;
+        GameEvents.GameOver += OnGameOver;
 
         badGuyAnimator = this.GetComponent<Animator>();
         agent = this.GetComponent<NavMeshAgent>();
@@ -33,6 +35,7 @@ public class BadGuy : MonoBehaviour
         badGuyCollider = this.GetComponent<CapsuleCollider>();
         agent.SetDestination(firstStop);
         nearest = false;
+        pistolShotSound = transform.GetComponent<AudioSource>();
 
     }
 
@@ -79,8 +82,8 @@ public class BadGuy : MonoBehaviour
                 // Stop shooting doofus they're gone!
                 badGuyAnimator.SetBool("Shooting", false);
 
-
-                Patrol();
+                if(this.agent.enabled)
+                    Patrol();
             }
 
             badGuyAnimator.SetFloat("Speed", agent.velocity.magnitude);
@@ -141,6 +144,7 @@ public class BadGuy : MonoBehaviour
 
     public void HurtWhatYoureShooting() 
     {
+        pistolShotSound.Play();
         GameEvents.InvokeHeroShot(damage);
     }
 
@@ -151,7 +155,12 @@ public class BadGuy : MonoBehaviour
         this.transform.position = new Vector3(100f, -20f, 100f);
         this.dead = true;
         this.badGuyAnimator.SetBool("Dead", true);
-        agent.isStopped = true;
     }
-    
+
+    void OnGameOver(object sender, EventArgs args)
+    {
+        GameEvents.NearestBadGuyShot -= OnNearestBadGuyShot;
+        GameEvents.GameOver -= OnGameOver;
+    }
+
 }

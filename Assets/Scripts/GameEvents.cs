@@ -22,6 +22,7 @@ public static class GameEvents
     public static event EventHandler PlayerDead;
     public static event EventHandler<PositionEventArgs> PlayerRespawn;
     public static event EventHandler NearestBadGuyShot;
+    public static event EventHandler GameOver;
     public static void InvokeHeroShot(int intPayloadDummy)
     {
         HeroShot(null, new IntEventArgs { intPayload = intPayloadDummy });
@@ -45,6 +46,11 @@ public static class GameEvents
     public static void InvokeNearestBadGuyShot()
     {
         NearestBadGuyShot(null, EventArgs.Empty);
+    }
+
+    public static void InvokeGameOver()
+    {
+        GameOver(null, EventArgs.Empty);
     }
 
 }

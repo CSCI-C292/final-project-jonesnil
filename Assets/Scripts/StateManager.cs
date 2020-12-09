@@ -13,6 +13,7 @@ public class StateManager : MonoBehaviour
     void Start()
     {
         GameEvents.PlayerDead += OnPlayerDead;
+        GameEvents.GameOver += OnGameOver;
 
         this.badGuyCount = this.transform.childCount;
         int counter = 0;
@@ -48,6 +49,8 @@ public class StateManager : MonoBehaviour
 
             counter += 1;
         }
+
+        GameEvents.InvokeGameOver();
     }
 
     Vector3 NearestBadGuyToHero() 
@@ -67,6 +70,12 @@ public class StateManager : MonoBehaviour
         }
 
         return nearest;
+    }
+
+    void OnGameOver(object sender, EventArgs args)
+    {
+        GameEvents.PlayerDead -= OnPlayerDead;
+        GameEvents.GameOver -= OnGameOver;
     }
 
 }
