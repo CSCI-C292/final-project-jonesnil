@@ -8,7 +8,7 @@ public class BadGuy : MonoBehaviour
 {
     [SerializeField] RunTimeData data;
     [SerializeField] int health;
-    [SerializeField] int damage;
+    int damage;
     CapsuleCollider badGuyCollider;
     Animator badGuyAnimator;
     NavMeshAgent agent;
@@ -36,6 +36,7 @@ public class BadGuy : MonoBehaviour
         agent.SetDestination(firstStop);
         nearest = false;
         pistolShotSound = transform.GetComponent<AudioSource>();
+        this.damage = 1;
 
     }
 
@@ -47,7 +48,11 @@ public class BadGuy : MonoBehaviour
             this.nearest = false;
             this.dead = true;
             this.badGuyAnimator.SetBool("Dead", true);
-            agent.isStopped = true;
+            if (agent.enabled)
+            {
+                agent.isStopped = true;
+                agent.enabled = false;
+            }
         }
 
         if (nearest) 
@@ -164,16 +169,17 @@ public class BadGuy : MonoBehaviour
 
     public void DieAtPosition(Vector3 position) 
     {
+        this.agent.isStopped = true;
         this.nearest = false;
         this.dead = true;
         this.badGuyCollider.enabled = false;
+        this.agent.enabled = false;
         this.health = 0;
         this.transform.position = IgnoreY(position);
-        Debug.Log(IgnoreY(position));
         this.transform.rotation = Quaternion.Euler(IgnoreY(Camera.main.transform.rotation.eulerAngles));
     }
 
-    void OnGameOver(object sender, EventArgs args)
+    void OnGameOver(object sender, BoolEventArgs args)
     {
         GameEvents.NearestBadGuyShot -= OnNearestBadGuyShot;
         GameEvents.GameOver -= OnGameOver;

@@ -13,6 +13,11 @@ public class  PositionEventArgs : EventArgs
     public Vector3 positionPayload;
 }
 
+public class BoolEventArgs : EventArgs
+{
+    public bool boolPayload;
+}
+
 
 public static class GameEvents
 {
@@ -23,7 +28,7 @@ public static class GameEvents
     public static event EventHandler<PositionEventArgs> PlayerRespawn;
     public static event EventHandler NearestBadGuyShot;
     public static event EventHandler BadGuyDead;
-    public static event EventHandler GameOver;
+    public static event EventHandler<BoolEventArgs> GameOver;
     public static void InvokeHeroShot(int intPayloadDummy)
     {
         if (HeroShot != null)
@@ -60,10 +65,11 @@ public static class GameEvents
             BadGuyDead(null, EventArgs.Empty);
     }
 
-    public static void InvokeGameOver()
+    public static void InvokeGameOver(bool wonGame)
     {
         if (GameOver != null)
-            GameOver(null, EventArgs.Empty);
+            GameOver(null, new BoolEventArgs {boolPayload = wonGame});
     }
+
 
 }

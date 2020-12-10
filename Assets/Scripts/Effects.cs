@@ -9,12 +9,15 @@ public class Effects : MonoBehaviour
 {
     Text crosshair;
     Image bloodScreen;
-    [SerializeField] float fadeSpeed;
+    [SerializeField] float fadeSpeedShot;
+    [SerializeField] float fadeSpeedGameOver;
     bool shotEffect;
     bool gameOver;
     Text gameOverText;
     Button titleButton;
     Text titleButtonText;
+    Button retryButton;
+    Text retryButtonText;
 
     void Start()
     {
@@ -29,6 +32,8 @@ public class Effects : MonoBehaviour
         gameOverText = transform.GetChild(2).GetComponent<Text>();
         titleButton = transform.GetChild(3).GetComponent<Button>();
         titleButtonText = titleButton.transform.GetChild(0).GetComponent<Text>();
+        retryButton = transform.GetChild(4).GetComponent<Button>();
+        retryButtonText = retryButton.transform.GetChild(0).GetComponent<Text>();
 
         SetGameOverUI(false);
     }
@@ -43,12 +48,17 @@ public class Effects : MonoBehaviour
 
         if (bloodScreen.color.a != 0 & !shotEffect && !gameOver)
         {
-            BloodScreenFade();
+            BloodScreenFade(fadeSpeedShot);
         }
 
-        if (shotEffect || gameOver)
+        if (shotEffect &&  !gameOver)
         {
-            BloodScreenUp();
+            BloodScreenUp(fadeSpeedShot);
+        }
+
+        if (gameOver) 
+        {
+            BloodScreenUp(fadeSpeedGameOver);
         }
     }
 
@@ -57,32 +67,49 @@ public class Effects : MonoBehaviour
         crosshair.enabled = !setting;
         gameOver = setting;
         gameOverText.enabled = setting;
-        titleButton.image.enabled = setting;
-        titleButton.enabled = setting;
-        titleButton.enabled = setting;
-        titleButtonText.enabled = setting;
+        SetButton(titleButton, titleButtonText, setting);
+        SetButton(retryButton, retryButtonText, setting);
     }
 
-    void OnGameOver(object sender, EventArgs args)
+    void SetButton(Button button, Text text,  bool setting) 
     {
-        SetGameOverUI(true);
+        button.image.enabled = setting;
+        button.enabled = setting;
+        text.enabled = setting;
+    }
 
+    void OnGameOver(object sender, BoolEventArgs args)
+    {
+        bool won = args.boolPayload;
+
+        if (won) 
+        {
+            gameOverText.text = "I'M GIVING YOU A RAISE!";
+            Color dummyColor = Color.blue;
+            dummyColor.a = bloodScreen.color.a;
+            bloodScreen.color = dummyColor;
+        }
+
+        else
+            gameOverText.text = "THE BASE IS TOAST";
+
+        SetGameOverUI(true);
 
         GameEvents.PlayerShot -= OnPlayerShot;
         GameEvents.GameOver -= OnGameOver;
     }
 
-    void BloodScreenFade()
+    void BloodScreenFade(float speed)
     {
         Color newScreenColor = bloodScreen.color;
-        newScreenColor.a = Mathf.Lerp(newScreenColor.a, 0, fadeSpeed);
+        newScreenColor.a = Mathf.Lerp(newScreenColor.a, 0, speed);
         bloodScreen.color = newScreenColor;
     }
 
-    void BloodScreenUp()
+    void BloodScreenUp(float speed)
     {
         Color newScreenColor = bloodScreen.color;
-        newScreenColor.a = Mathf.Lerp(newScreenColor.a, 1, fadeSpeed);
+        newScreenColor.a = Mathf.Lerp(newScreenColor.a, 1, speed);
         bloodScreen.color = newScreenColor;
     }
 
@@ -94,5 +121,10 @@ public class Effects : MonoBehaviour
     public void TitleScreenButtonPressed()
     {
         SceneManager.LoadScene("StartScreen");
+    }
+
+    public void RetryButtonPressed() 
+    {
+        SceneManager.LoadScene("Level1");
     }
 }

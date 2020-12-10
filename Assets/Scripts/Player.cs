@@ -11,6 +11,9 @@ public class Player : MonoBehaviour
     [SerializeField] float _mouseSensitivity;
     [SerializeField] int _damage;
     [SerializeField] int _startHealth;
+    [SerializeField] float _jumpHeight;
+    float jumpGoal;
+    bool jumping;
     int _health;
     float _currentTilt;
     Camera _cam;
@@ -45,6 +48,26 @@ public class Player : MonoBehaviour
 
         Gravity();
 
+        if (Input.GetKeyDown("space") && controller.isGrounded) 
+        {
+            Debug.Log("Jump");
+            jumping = true;
+            jumpGoal = this.transform.position.y + _jumpHeight;
+        }
+
+        if (jumping) 
+        {
+            if (this.transform.position.y >= jumpGoal)
+            {
+                jumping = false;
+            }
+            else
+                Jump();
+        }
+
+
+
+
         if (Input.GetMouseButtonDown(0) && !_gunAnimator.GetCurrentAnimatorStateInfo(0).IsName("Fire") && !_dead) 
         {
             pistolShotSound.Play();
@@ -55,26 +78,36 @@ public class Player : MonoBehaviour
 
     private void LateUpdate()
     {
+
+        Aim();
+
         if (!_dead && this._health <= 0)
         {
+
+            Vector3 targetPosition = new Vector3(data.heroPos.x,
+                                           this.transform.position.y,
+                                           data.heroPos.z);
+            transform.right = (targetPosition - this.transform.position).normalized * -1;
+
             controller.enabled = false;
             _dead = true;
             GameEvents.InvokePlayerDead();
         }
-
-        Aim();
     }
 
     void Aim()
     {
-        float mouseX = Input.GetAxis("Mouse X");
-        float mouseY = Input.GetAxis("Mouse Y");
+        if (!_dead)
+        {
+            float mouseX = Input.GetAxis("Mouse X");
+            float mouseY = Input.GetAxis("Mouse Y");
 
-        transform.Rotate(Vector3.up, mouseX * _mouseSensitivity);
+            transform.Rotate(Vector3.up, mouseX * _mouseSensitivity);
 
-        _currentTilt -= mouseY * _mouseSensitivity;
-        _currentTilt = Mathf.Clamp(_currentTilt, -90f, 90f);
-        _cam.transform.localEulerAngles = new Vector3(_currentTilt, 0f, 0f);
+            _currentTilt -= mouseY * _mouseSensitivity;
+            _currentTilt = Mathf.Clamp(_currentTilt, -90f, 90f);
+            _cam.transform.localEulerAngles = new Vector3(_currentTilt, 0f, 0f);
+        }
     }
 
     void Shoot() 
@@ -107,6 +140,12 @@ public class Player : MonoBehaviour
         controller.Move(new Vector3(0, -5f * Time.deltaTime, 0));
     }
 
+    void Jump()
+    {
+        controller.Move(new Vector3(0, 10f * Time.deltaTime, 0));
+    }
+
+
     void OnPlayerShot(object sender, EventArgs args) 
     {
         this._health -= data.heroDamage;
@@ -123,7 +162,7 @@ public class Player : MonoBehaviour
         controller.enabled = true;
     }
 
-    void OnGameOver(object sender, EventArgs args)
+    void OnGameOver(object sender, BoolEventArgs args)
     {
         Cursor.lockState = CursorLockMode.None;
 

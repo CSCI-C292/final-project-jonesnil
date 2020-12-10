@@ -41,7 +41,6 @@ public class StateManager : MonoBehaviour
                 badGuys[counter].nearest = false;
                 
                 Vector3 playerSpawnPos = badGuys[counter].transform.position;
-                Debug.Log(playerSpawnPos);
                 Vector3 playerPos = Camera.main.transform.position;
                 badGuys[counter].DieAtPosition(playerPos);
                 GameEvents.InvokePlayerRespawn(playerSpawnPos);
@@ -52,7 +51,7 @@ public class StateManager : MonoBehaviour
             counter += 1;
         }
 
-        GameEvents.InvokeGameOver();
+        GameEvents.InvokeGameOver(false);
     }
 
     Vector3 NearestBadGuyToHero() 
@@ -79,7 +78,7 @@ public class StateManager : MonoBehaviour
         data.nearestBadGuyToHero = NearestBadGuyToHero();
     }
 
-    void OnGameOver(object sender, EventArgs args)
+    void OnGameOver(object sender, BoolEventArgs args)
     {
         GameEvents.PlayerDead -= OnPlayerDead;
         GameEvents.GameOver -= OnGameOver;

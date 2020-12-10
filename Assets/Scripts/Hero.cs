@@ -16,6 +16,7 @@ public class Hero : MonoBehaviour
     [SerializeField] int health;
     AudioSource pistolShotSound;
     bool gameOver;
+    bool dead;
 
     // Start is called before the first frame update
     void Start()
@@ -31,6 +32,7 @@ public class Hero : MonoBehaviour
         pistolShotSound = transform.GetComponent<AudioSource>();
         
         gameOver = false;
+        dead = false;
         data.heroDamage = damage;
     }
 
@@ -41,7 +43,13 @@ public class Hero : MonoBehaviour
 
         heroAnimator.SetFloat("Speed", agent.velocity.magnitude);
 
-        if (this.health <= 0)
+        if (this.health <= 0 && !dead)
+        {
+            dead = true;
+            GameEvents.InvokeGameOver(true);
+        }
+
+        if (this.health <= 0) 
         {
             agent.isStopped = true;
             heroAnimator.SetBool("Dead", true);
@@ -143,10 +151,9 @@ public class Hero : MonoBehaviour
 
     }
 
-    void OnGameOver(object sender, EventArgs args)
+    void OnGameOver(object sender, BoolEventArgs args)
     {
         gameOver = true;
-
 
         GameEvents.HeroShot -= OnHeroShot;
         GameEvents.GameOver -= OnGameOver;
