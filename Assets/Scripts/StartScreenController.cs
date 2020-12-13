@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+// This isn't a very interesting class, it just controls the camera movement and the UI on
+// the start screen of the game.
+
 public class StartScreenController : MonoBehaviour
 {
     [SerializeField] float turnSpeed;

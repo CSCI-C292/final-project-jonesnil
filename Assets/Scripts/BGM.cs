@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
+// Simple singleton for in game music to keep it in the level and have it play between 
+// reloads.
+
 public class BGM : MonoBehaviour
 {
     static BGM instance;

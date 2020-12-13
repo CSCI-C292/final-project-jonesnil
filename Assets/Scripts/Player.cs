@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+// The aim and move code for this project is pretty much identical to the 3D tutorial from class.
+
 public class Player : MonoBehaviour
 {
     Animator _gunAnimator;
@@ -23,7 +25,6 @@ public class Player : MonoBehaviour
     bool _dead;
     AudioSource pistolShotSound;
 
-    // Start is called before the first frame update
     void Awake()
     {
         GameEvents.PlayerRespawn += OnPlayerRespawn;
@@ -48,6 +49,11 @@ public class Player : MonoBehaviour
 
         Gravity();
 
+        // These two bits deal with jumping. I want the jump to seem smooth,
+        // so I basically just give the player negative gravity when they hit spacebar
+        // and then when they reach a certain height over where they started it turns off
+        // and they fall again. Obviously they have to be on the ground to jump, though.
+
         if (Input.GetKeyDown("space") && controller.isGrounded) 
         {
             Debug.Log("Jump");
@@ -66,8 +72,8 @@ public class Player : MonoBehaviour
         }
 
 
-
-
+        // If you click the left mouse button, and your gun isn't already firing, and you're not dead,
+        // do the shoot stuff.
         if (Input.GetMouseButtonDown(0) && !_gunAnimator.GetCurrentAnimatorStateInfo(0).IsName("Fire") && !_dead) 
         {
             pistolShotSound.Play();
@@ -80,6 +86,11 @@ public class Player : MonoBehaviour
     {
 
         Aim();
+
+        // This is done once each time the player is killed. It points them to the hero
+        // and invokes the dead event so statemanager can send it a bad guy location to spawn at.
+        // The looking at the hero function doesn't work well at the moment though, but I didn't 
+        // think it was 100% crucial to the project.
 
         if (!_dead && this._health <= 0)
         {
@@ -110,6 +121,7 @@ public class Player : MonoBehaviour
         }
     }
 
+    // Does a raycast to check if you shot the hero, invokes an event if you did.
     void Shoot() 
     {
         Vector3 centerScreen = Camera.main.transform.position;
@@ -152,6 +164,7 @@ public class Player : MonoBehaviour
 
     }
 
+    // Moves player to new position and resets health.
     void OnPlayerRespawn(object sender, PositionEventArgs args) 
     {
         this._health = _startHealth;
@@ -162,6 +175,8 @@ public class Player : MonoBehaviour
         controller.enabled = true;
     }
 
+    // Disconnect events so game can reload properly. Also unlocks cursor
+    // so you can click buttons.
     void OnGameOver(object sender, BoolEventArgs args)
     {
         Cursor.lockState = CursorLockMode.None;

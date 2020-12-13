@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// When the hero is shot, I want the animator boolean for shot to turn false after the animation plays.
+// This behavior is tied to the shot animation in the hero controller and just flips off the switch after
+// one play of the animation basically.
+
 public class AfterShot : StateMachineBehaviour
 {
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state

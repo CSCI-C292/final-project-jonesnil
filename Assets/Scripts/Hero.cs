@@ -46,6 +46,8 @@ public class Hero : MonoBehaviour
         if (this.health <= 0 && !dead)
         {
             dead = true;
+
+            // GameOver(true) means the player won, GameOver(false) means they lost.
             GameEvents.InvokeGameOver(true);
         }
 
@@ -111,6 +113,8 @@ public class Hero : MonoBehaviour
 
     }
 
+    // This is called when the animation for shooting hits a certain point, and it checks what the hero
+    // is pointing at and uses events to deal damage to it accordingly.
     public void HurtWhatYoureShooting() 
     {
         RaycastHit shot;
@@ -130,6 +134,8 @@ public class Hero : MonoBehaviour
         }
     }
 
+    // This function looks at what the hero is trying to shoot and starts
+    // the animation.
     public void ShootAt(Vector3 position) 
     {
 
@@ -144,6 +150,7 @@ public class Hero : MonoBehaviour
         agent.isStopped = true;
     }
 
+    // Starts the hero hurt animation and gives damage to the hero.
     void OnHeroShot(object sender, IntEventArgs args) 
     {
         heroAnimator.SetBool("Shot", true);
@@ -151,6 +158,7 @@ public class Hero : MonoBehaviour
 
     }
 
+    // Disconnect events so game can reload properly
     void OnGameOver(object sender, BoolEventArgs args)
     {
         gameOver = true;

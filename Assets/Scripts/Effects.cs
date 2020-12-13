@@ -5,6 +5,10 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
 
+// I don't think anything particularly interesting happens in here so I'll just go over it briefly
+// at the top. This deals with the crosshair UI, the UI for the blood effect when the player is shot,
+// and the GameOver/GameWon UI.
+
 public class Effects : MonoBehaviour
 {
     Text crosshair;

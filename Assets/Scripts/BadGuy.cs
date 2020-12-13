@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.AI;
 using System;
 
+// The pathfinding on this class is pretty much braindead. I just set it to keep four points 
+// I gave it in the editor and cycle them until something shows up it can shoot/ the player
+// kills it to respawn.
 public class BadGuy : MonoBehaviour
 {
     [SerializeField] RunTimeData data;
@@ -55,6 +58,8 @@ public class BadGuy : MonoBehaviour
             }
         }
 
+        // This updates the RunTimeData object so the hero always knows where the closest
+        // bad guy to him is.
         if (nearest) 
         {
             data.nearestBadGuyToHero = this.transform.position;
@@ -134,6 +139,8 @@ public class BadGuy : MonoBehaviour
         return !Physics.Linecast(transform.position, data.heroPos, ~((1 << 9) |  (1 << 10)));
     }
 
+    // Checks how close the bad guy is to the patrol points and if it's on top of one it changes
+    // the navmesh destination.
     void Patrol() 
     {
         float distanceToFirst = (this.transform.position - firstStop).magnitude;
@@ -153,6 +160,9 @@ public class BadGuy : MonoBehaviour
             GoToFirst();
     }
 
+    // This does bad guy damage. Admittedly it's a little wasteful performance wise, because
+    // it will be called on every bad guy and only do anything for the nearest one (that is
+    // always the one the hero shoots).
     void OnNearestBadGuyShot(object sender, EventArgs args) 
     {
         if (this.nearest) 
@@ -161,12 +171,17 @@ public class BadGuy : MonoBehaviour
         }
     }
 
+    // This does less logic work than the hero class's version, because the bad guys only ever shoot
+    // the hero. It's still called by the same frame of the shooting animation.
     public void HurtWhatYoureShooting() 
     {
         pistolShotSound.Play();
         GameEvents.InvokeHeroShot(damage);
     }
 
+    // This is only called when the player died and wants to respawn as this bad guy.
+    // It's called in StateManager and it just disables the bad guy's collider and navmesh agent
+    // and puts the corpse where the player died.
     public void DieAtPosition(Vector3 position) 
     {
         this.agent.isStopped = true;
@@ -179,6 +194,7 @@ public class BadGuy : MonoBehaviour
         this.transform.rotation = Quaternion.Euler(IgnoreY(Camera.main.transform.rotation.eulerAngles));
     }
 
+    // Disconnect events so game can reload properly
     void OnGameOver(object sender, BoolEventArgs args)
     {
         GameEvents.NearestBadGuyShot -= OnNearestBadGuyShot;
